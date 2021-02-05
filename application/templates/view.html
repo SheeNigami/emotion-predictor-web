@@ -1,0 +1,33 @@
+<!-- Inherits from layout.html -->
+{% extends "layout.html" %}
+<!-- The block content replace the one encapsulated in  layout.html -->
+{% block content %}
+        <hr>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Prediction</th>
+                    <th>Timestamp</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in entries %}
+                <tr>
+                    <td>{{ entry.image_name }}</td>
+                    <td>{{ entry.prediction|int }}</td>
+                    <td>{{ entry.predicted_on.strftime("%d %b %y %H:%M") }}</td>
+                    <td>
+                        <form name="frmRemoveEntry" action="/remove" method="post" 
+                              novalidate>
+                        <input type="hidden" name="id" value="{{entry.id}}">
+                        <input type="submit" class="form-control btn-danger" 
+                               value="Remove">
+                        </form>
+                    </td>
+                    
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+{% endblock %}

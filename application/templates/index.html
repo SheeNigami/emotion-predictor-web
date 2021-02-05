@@ -1,0 +1,22 @@
+<!-- Inherits from layout.html -->
+{% extends "layout.html" %}
+<!-- The block content replace the one encapsulated in  layout.html -->
+{% block content %}
+<div class="row">
+<div class="col-md-6 offset-md-3">
+    <div class="centered">
+        <video playsinline autoplay></video>
+        <canvas id="canvas" width="120" height="120"></canvas>
+    </div>
+    <div class="centered">
+        <input type="button" id="photoButton" class="btn btn-primary" value="Take Photo">
+        <input type="button" id="clearButton" class="btn btn-danger" value="Clear">
+        <input type="button" id="predictButton" class="btn btn-success" value="Predict">
+    </div>
+
+    <div class="centered btm-5">
+        <h1 id="result"></h1>
+    </div>
+</div>
+</div>
+{% endblock %}
