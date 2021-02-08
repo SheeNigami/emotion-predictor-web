@@ -20,11 +20,11 @@ else:
     app.config.from_pyfile('config_dply.cfg')
     print("Using config for deployment")
 
-# instantiate SQLAlchemy to handle db process
-db = SQLAlchemy(app)
-
 # instantiate the Heroku object before db
 heroku = Heroku(app)
+
+# instantiate SQLAlchemy to handle db process
+db = SQLAlchemy(app)
 
 #run the file routes.py
 from application import routes

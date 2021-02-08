@@ -8,7 +8,7 @@ class Entry(db.Model):
  
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     image_name = db.Column(db.String(50))
-    prediction = db.Column(db.Integer)
+    prediction = db.Column(db.String(10))
     username = db.Column(db.String)
     predicted_on = db.Column(db.DateTime, nullable=False)
 

@@ -1,6 +1,9 @@
-from application import app
+from application import app, db
 from flask import render_template, request, flash
 from flask_cors import CORS, cross_origin
+from flask import json, jsonify
+from flask import abort, redirect, url_for, session
+from application.forms import LoginForm, RegisterForm
 from keras.preprocessing import image
 from PIL import Image, ImageOps
 import numpy as np
@@ -13,11 +16,25 @@ import numpy as np
 import requests
 import pathlib, os
 import tempfile
-from application.models import Entry
+from application.models import Entry, Accounts
 from datetime import datetime
 
 #create the database if not exist
 db.create_all()
+
+#labels for prediction
+labels = ['Angry','Fear','Happy','Sad','Surprise', 'Neutral']
+
+def get_user(username):
+    try:
+        entries = Accounts.query.filter_by(username=username).first()
+        result = entries
+        if result is None:
+            return False
+        return result
+    except Exception as error:
+        db.session.rollback()
+        return 0  
 
 def add_entry(new_entry):
     try:
@@ -82,33 +99,36 @@ def index_page():
     return render_template('index.html')
  
 #Handles http://127.0.0.1:5000/predict
-@app.route("/predict", methods=['GET','POST'])
+@app.route("/predict", methods=['POST'])
 @cross_origin(origin='localhost',headers=['Content-Type','Authorization'])
 def predict():
-    # get data from drawing canvas and save as image
-    parseImage(request.get_data())
-    # Build directory
-    img_dir = tempfile.TemporaryDirectory() + "output.png"
-    # Decoding and pre-processing base64 image
-    img = image.img_to_array(image.load_img(img_dir, color_mode="grayscale", target_size=(48, 48)) / 255.
-    # reshape data to have a single channel
-    img = img.reshape(1,20,20,1)
- 
-    predictions = make_prediction(img)
+    if request.method == 'POST':
+        # get data from drawing canvas and save as image
+        parseImage(request.get_data())
+        print("bruh")
+        # Build directory
+        img_dir = tempfile.TemporaryDirectory() + "output.png"
+        print(img_dir)
+        # Decoding and pre-processing base64 image
+        img = image.img_to_array(image.load_img(img_dir, color_mode="grayscale", target_size=(48, 48)) / 255.)
+        # reshape data to have a single channel
+        img = img.reshape(1,48,48,1)
     
-    new_entry = Entry(  image_name=datetime.now().strftime("%d %B %Y") + session['username'],
-                        prediction=np.argmax(predictions),
-                        username=session['username'],
-                        predicted_on=datetime.utcnow())
-    add_entry(new_entry)
+        predictions = make_prediction(img)
+        
+        new_entry = Entry(  image_name=datetime.now().strftime("%d %B %Y") + session['username'],
+                            prediction=labels[np.argmax(predictions)],
+                            username=session['username'],
+                            predicted_on=datetime.utcnow())
+        add_entry(new_entry)
 
 
-    ret = ""
-    for i, pred in enumerate(predictions):
-        ret = "{}".format(np.argmax(pred))
-        response = ret
-        return response
-
+        ret = ""
+        for i, pred in enumerate(predictions):
+            ret = "{}".format(labels[np.argmax(pred)])
+            response = ret
+            return response
+        
 @app.route('/view') 
 def view_page():
         entries = get_entries(session['username'])
@@ -146,6 +166,7 @@ def login():
         else:
             flash("Error, cannot proceed with login","danger")
     return render_template("login.html", form=form, title="Login")
+
 @app.route('/register', methods=['GET','POST'])
 def register():
     form = RegisterForm()
@@ -165,6 +186,7 @@ def register():
         else:
             flash("Error, cannot proceed with register","danger")
     return render_template("register.html", form=form, title="Register")
+    
 @app.route('/logout', methods=['GET'])
 def logout():
     if 'username' in session:

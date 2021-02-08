@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>{{title}}</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/main.css')}}" />
+</head>
+
+<body>
+    <div class="sidenav">
+        <div class="login-main-text">
+            <h2>Facial Expression Detection<br><br> Register Page</h2>
+            <p>Register from here to access.</p>
+        </div>
+    </div>
+    <div class="main">
+        <div class="col-md-6 col-sm-12">
+            <div class="login-form">
+                <form name="frmLogin" action="/register" method="POST" id="login-form" novalidate>
+                    <div class="container">
+                        {% with messages = get_flashed_messages(with_categories=true)%}
+                        {% if messages %}
+                        {% for category, message in messages %}
+                        <div class="alert alert-{{category}}">
+                            <p>{{ message }}</p>
+                        </div>
+                        {% endfor %}
+                        {% endif %}
+                        {% endwith %}
+                    </div>
+                    <legend>{{title}}</legend>
+                    {{ form.hidden_tag() }}
+                    <div class="form-group">
+                        <p class="col-md-9">
+                            {{ form.username.label }}<br>
+                            {{ form.username(class_='form-control') }}
+                            {% for error in form.username.errors %}
+                            <span class="error-message">{{ error }}</span>
+                            {% endfor %}
+                        </p>
+                    </div>
+                    <div class="form-group">
+                        <p class="col-md-9">
+                            {{ form.password.label }}<br>
+                            {{ form.password(class_='form-control') }}
+                            {% for error in form.password.errors %}
+                            <span class="error-message">{{ error }}</span>
+                            {% endfor %}
+                        </p>
+                    </div>
+                    <div class="form-group">
+                        <p class="col-md-9">
+                            {{ form.confirm.label }}<br>
+                            {{ form.confirm(class_='form-control') }}
+                            {% for error in form.confirm.errors %}
+                            <span class="error-message">{{ error }}</span>
+                            {% endfor %}
+                        </p>
+                    </div>
+                    <p class=" btn">
+                        {{ form.submit(class_='form-control btn btn-dark') }}
+                    </p>
+
+                </form>
+                <p class="btn"><a href="/login" class="btn btn-secondary">Go to login page</a></p>
+
+            </div>
+        </div>
+    </div>
+    </div>
+</body>
+
+</html>
