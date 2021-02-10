@@ -3,9 +3,13 @@
 <!-- The block content replace the one encapsulated in  layout.html -->
 {% block content %}
         <hr>
+        <input class="form-control" type="text" id="myInput" onkeyup="myFunction(0)" placeholder="Search for names..">
+        <input class="form-control" type="text" id="myInput" onkeyup="myFunction(1)" placeholder="Search for prediction..">
+        <input class="form-control" type="text" id="myInput" onkeyup="myFunction(2)" placeholder="Search for timestamp..">
         <table class="table table-striped">
             <thead>
                 <tr>
+                    <th>Image name</th>
                     <th>Prediction</th>
                     <th>Timestamp</th>
                 </tr>
@@ -29,5 +33,28 @@
                 {% endfor %}
             </tbody>
         </table>
+        <script>
+            function myFunction(column) {
+              // Declare variables
+              var input, filter, table, tr, td, i, txtValue;
+              input = document.getElementById("myInput");
+              filter = input.value.toUpperCase();
+              table = document.getElementById("myTable");
+              tr = table.getElementsByTagName("tr");
+            
+              // Loop through all table rows, and hide those who don't match the search query
+              for (i = 0; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("td")[column];
+                if (td) {
+                  txtValue = td.textContent || td.innerText;
+                  if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                  } else {
+                    tr[i].style.display = "none";
+                  }
+                }
+              }
+            }
+            </script>
 
 {% endblock %}

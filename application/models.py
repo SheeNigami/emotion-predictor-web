@@ -11,6 +11,21 @@ class Entry(db.Model):
     prediction = db.Column(db.String(10))
     username = db.Column(db.String)
     predicted_on = db.Column(db.DateTime, nullable=False)
+    @validates('image_name') 
+    def validate_username(self, key, username):
+        if len('image_name')>50:
+            raise AssertionError('Value must smaller than 50')
+        return image_name
+    @validates('prediction') 
+    def validate_password(self, key, password):
+        if len('prediction')>10:
+            raise AssertionError('Value must smaller than 50')
+        return prediction
+    @validates('username') 
+    def validate_password(self, key, password):
+        if len('username')>50:
+            raise AssertionError('Value must smaller than 50')
+        return username
 
 
 
