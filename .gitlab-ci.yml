@@ -24,6 +24,7 @@ test-build:
   image: python:3.8
   stage: test
   script:
+    - export TESTING=config_test.cfg
     - apt-get update -qy
     - pip install -r requirements.txt
     - python -m pytest -v -s
