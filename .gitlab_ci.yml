@@ -11,10 +11,10 @@ docker-build:
   script:
     #- docker build --pull -t "$CI_REGISTRY_IMAGE" .
     #- docker push "$CI_REGISTRY_IMAGE"
-    - docker build -f Dockerfile --iidfile imageid.txt -t registry.heroku.com/ca2-2b11-asdfasdf-web.herokuapp.com/web .
+    - docker build -f Dockerfile --iidfile imageid.txt -t registry.heroku.com/ca2-2b11-asdfasdf-web/web .
     - docker login -u _ -p $HEROKU_API_KEY registry.heroku.com
-    - docker push registry.heroku.com/ca2-2b11-asdfasdf-web.herokuapp.com/web
+    - docker push registry.heroku.com/ca2-2b11-asdfasdf-web/web
     - apk add --no-cache curl
     - echo "Docker Image ID is $(cat imageid.txt)"
     - |-
-      curl -X PATCH https://api.heroku.com/apps/ca2-2b11-asdfasdf-web.herokuapp.com/formation --header "Content-Type: application/json" --header "Accept: application/vnd.heroku+json; version=3.docker-releases" --header "Authorization: Bearer ${HEROKU_API_KEY}" --data '{ "updates": [ { "type": "web", "docker_image": "'$(cat imageid.txt)'" } ] }'
+      curl -X PATCH https://api.heroku.com/apps/ca2-2b11-asdfasdf-web/formation --header "Content-Type: application/json" --header "Accept: application/vnd.heroku+json; version=3.docker-releases" --header "Authorization: Bearer ${HEROKU_API_KEY}" --data '{ "updates": [ { "type": "web", "docker_image": "'$(cat imageid.txt)'" } ] }'
