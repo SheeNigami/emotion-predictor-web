@@ -50,8 +50,8 @@ $("#predictButton").click(function(){
         var img = canvas.toDataURL('image/png');
         $.ajax({
             type: "POST",
-            //url: "https://ca2-2b11-asdfasdf-web.herokuapp.com/predict",
-            url: "http://localhost:5000/predict",
+            url: "https://ca2-2b11-asdfasdf-web.herokuapp.com/predict",
+            //url: "http://localhost:5000/predict",
             data: img,
             success: function(data){
                 $('#result').text('Predicted Output: ' + data);

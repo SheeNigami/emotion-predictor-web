@@ -1,0 +1,20 @@
+stages:
+    - build
+docker-build:
+  # Official docker image.
+  image: docker:latest
+  stage: build
+  services:
+    - docker:dind
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  script:
+    # - docker build --pull -t "$CI_REGISTRY_IMAGE" .
+    # - docker push "$CI_REGISTRY_IMAGE"
+    - docker build -f Dockerfile --iidfile imageid.txt -t registry.heroku.com/https://ca2-2b11-asdfasdf-web.herokuapp.com/predict/web .
+    - docker login -u _ -p $HEROKU_API_KEY registry.heroku.com
+    - docker push registry.heroku.com/https://ca2-2b11-asdfasdf-web.herokuapp.com/predict/web
+    - apk add --no-cache curl
+    - echo "Docker Image ID is $(cat imageid.txt)"
+    - |-
+      curl -X PATCH https://api.heroku.com/apps/https://ca2-2b11-asdfasdf-web.herokuapp.com/predict/formation --header "Content-Type: application/json" --header "Accept: application/vnd.heroku+json; version=3.docker-releases" --header "Authorization: Bearer ${HEROKU_API_KEY}" --data '{ "updates": [ { "type": "web", "docker_image": "'$(cat imageid.txt)'" } ] }'
