@@ -58,7 +58,7 @@ colorama==0.4.3
 flask-heroku==0.1.9
 Flask-SQLAlchemy==2.4.4
 MarkupSafe==1.1.1
-psycopg2==2.8.6
+psycopg2-binary
 SQLAlchemy
 threadpoolctl
 toml
@@ -66,3 +66,4 @@ tensorboard==2.4.0
 tensorboard-plugin-wit==1.7.0
 tensorflow==2.3.1
 tensorflow-estimator==2.3.0
+pytz

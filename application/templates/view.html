@@ -3,9 +3,11 @@
 <!-- The block content replace the one encapsulated in  layout.html -->
 {% block content %}
         <hr>
-        <input class="form-control" type="text" id="myInput" onkeyup="myFunction(0)" placeholder="Search for names..">
-        <input class="form-control" type="text" id="myInput" onkeyup="myFunction(1)" placeholder="Search for prediction..">
-        <input class="form-control" type="text" id="myInput" onkeyup="myFunction(2)" placeholder="Search for timestamp..">
+      <div class="row">
+        <input class="form-control col-sm" type="text" id="myInput" onkeyup="myFunction(0)" placeholder="Search for names..">
+        <input class="form-control col-sm" type="text" id="myInput" onkeyup="myFunction(1)" placeholder="Search for prediction..">
+        <input class="form-control col-sm" type="text" id="myInput" onkeyup="myFunction(2)" placeholder="Search for timestamp..">
+      </div>
         <table class="table table-striped" id="myTable">
             <thead>
                 <tr>

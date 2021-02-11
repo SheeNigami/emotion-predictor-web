@@ -11,7 +11,7 @@
     <div class="container-fluid text-center top-container">
         <img src="{{ url_for('static',filename='images/logo2.png')}}">
     </div>
-    <div class="container">
+    <div class="container content-container">
         {% include "includes/nav.html" %}
         {% with messages = get_flashed_messages(with_categories=true)%}
         {% if messages %}

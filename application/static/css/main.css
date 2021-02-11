@@ -42,9 +42,10 @@ input[type=text]:focus{
     background: #333;
     padding:5px;
     border-top:2px solid #0f0f0f;
-    position:absolute; 
     bottom:0;
     display: block;
+    margin-top: 50px;
+    position: fixed;
 }
  
 footer {
@@ -83,4 +84,8 @@ div video {
 .centered {
     position: relative;
     text-align: center;
+}
+
+.content-container{
+    padding-bottom: 50px;
 }

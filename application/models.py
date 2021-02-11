@@ -16,11 +16,13 @@ class Entry(db.Model):
         if len('image_name')>50:
             raise AssertionError('Value must smaller than 50')
         return image_name
+
     @validates('prediction') 
     def validate_prediction(self, key, prediction):
-        if len('prediction')>10:
-            raise AssertionError('Value must smaller than 50')
+        if prediction not in ['Angry','Fear','Happy','Sad','Surprise', 'Neutral']:
+            raise AssertionError('Value must be one of the original predictions')
         return prediction
+
     @validates('username') 
     def validate_password(self, key, username):
         if len('username')>50:

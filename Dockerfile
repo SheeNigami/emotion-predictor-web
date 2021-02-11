@@ -8,7 +8,7 @@ COPY . /app
 # Change our working directory to app fold
 WORKDIR /app
 # Install all the packages needed to run our web app
-RUN pip install -r requirements.txt
+RUN  pip install -r requirements.txt --no-cache-dir
 # Add every files and folder into the app folder 
 ADD . /app
 # Expose port 5000 for http communication

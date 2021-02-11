@@ -3,6 +3,7 @@ from flask import render_template, request, flash
 from flask_cors import CORS, cross_origin
 from flask import json, jsonify
 from flask import abort, redirect, url_for, session
+from sqlalchemy.orm.exc import UnmappedInstanceError
 from application.forms import LoginForm, RegisterForm
 from keras.preprocessing import image
 from PIL import Image, ImageOps
@@ -18,12 +19,15 @@ import pathlib, os
 import tempfile
 from application.models import Entry, Accounts
 from datetime import datetime
+import pytz
 
 #create the database if not exist
 db.create_all()
 
 #labels for prediction
-labels = ['Angry','Fear','Happy','Sad','Surprise', 'Neutral']
+labels = ['Angry','Fear','Sad','Neutral','Happy', 'Surprise']
+
+timezone = pytz.timezone("Singapore")
 
 def get_user(username):
     try:
@@ -63,9 +67,12 @@ def remove_entry(id):
         entry = Entry.query.get(id)
         db.session.delete(entry)
         db.session.commit()
+    except UnmappedInstanceError:
+        pass
     except Exception as error:
         db.session.rollback()
         flash(error,"danger")
+
 
 
 def parseImage(imgData):
@@ -103,15 +110,8 @@ def index_page():
 @app.route("/predict", methods=['GET', 'POST'])
 @cross_origin(origin='localhost',headers=['Content-Type','Authorization'])
 def predict():
-    #print(request.get_data())
     # get data from drawing canvas and save as image
     img_dir = parseImage(request.get_data())
-
-
-    # Build directory
-    # with tempfile.TemporaryDirectory() as tmpdirname:
-    #     img_dir = tmpdirname
-    #     print(img_dir)
 
     # Decoding and pre-processing base64 image
     img = image.img_to_array(image.load_img(img_dir + 'output.png', color_mode="grayscale", target_size=(48, 48))) / 255.
@@ -121,34 +121,36 @@ def predict():
     predictions = make_prediction(img)
     
     for i, pred in enumerate(predictions):
-        label_pred = labels[np.argmax(pred)]
-    new_entry = Entry(image_name=datetime.now().strftime("%d %B %Y") + session['username'],
+        label_pred = "{}".format(labels[np.argmax(pred)])
+    
+
+    new_entry = Entry(image_name=timezone.localize(datetime.now()).strftime("%d %B %Y, ")+ label_pred+ " by " + session['username'],
                         prediction=label_pred,
                         username=session['username'],
-                        predicted_on=datetime.utcnow())
+                        predicted_on=timezone.localize(datetime.now()))
     add_entry(new_entry)
 
+    response = []
+    for i in predictions[0]:
+        response.append(i)
 
     ret = ""
     for i, pred in enumerate(predictions):
         ret = "{}".format(labels[np.argmax(pred)])
-        response = ret
-        return response
+    response.append(ret)
+    return jsonify(response)
         
 @app.route('/view') 
 def view_page():
         entries = get_entries(session['username'])
         return render_template("view.html",title="View past results", entries = entries)
 
-
-
 @app.route('/remove', methods=['POST'])
 def remove():
-    form = PredictionForm()
     req = request.form
     id = req["id"]
     remove_entry(id)
-    return redirect(url_for('index_page'))
+    return redirect(url_for('view_page'))
 
 
 @app.route('/login', methods=['GET','POST'])
@@ -184,7 +186,7 @@ def register():
             if unique_check == 0:
                 new_entry = Accounts(  
                             username=username, password=password,
-                            created_on=datetime.utcnow())
+                            created_on=timezone.localize(datetime.now()))
                 add_entry(new_entry)
                 return redirect(url_for('login'))
             else:
