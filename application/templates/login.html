@@ -13,10 +13,12 @@
 </head>
 
 <body>
-    <div>
-        <h2>Facial Expression Detection<br> Login Page</h2>
-        <p>Login from here to access.</p>
+    <div class="d-lg-flex half">
+    <div class="bg order-1 order-md-2">
+        <h2 style="color: white;" class="text-center">Facial Expression Detection<br> Login Page</h2>
+        <p style="color: white;" class="text-center">Login from here to access.</p>
     </div>
+    <div class="contents order-2 order-md-1">
     <form name="frmLogin" action="/login" method="post" novalidate>
         <legend>{{title}}</legend>
         {{ form.hidden_tag() }}
@@ -57,6 +59,8 @@
             </fieldset>
     </form>
     <p class="btn"><a href="/register" class="btn btn-secondary">Go to register page</a></p>
+</div>
+</div>
 </body>
 
 </html>

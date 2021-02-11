@@ -4,13 +4,13 @@ const context = canvas.getContext("2d");
 const video = document.querySelector("video");
 
 //defining canvas dims
-canvas.width = 120;
-canvas.height = 120;
+canvas.width = 240;
+canvas.height = 240;
 
 //getmediadevices constraints
 const constraints = {
   audio: false,
-  video: { width: 120, height: 120 }
+  video: { width: 240, height: 240 }
 };
 
 //set video sourceobj to webcam
@@ -38,7 +38,7 @@ $("#photoButton").on("click", function() {
 
 //clear button
 $("#clearButton").on("click", function() {
-    context.clearRect( 0, 0, 120, 120 );
+    context.clearRect( 0, 0, 240, 240 );
     $("canvas").hide();
     $("video").show();
 });

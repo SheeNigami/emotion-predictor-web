@@ -12,15 +12,12 @@
 </head>
 
 <body>
-    <div class="sidenav">
-        <div class="login-main-text">
-            <h2>Facial Expression Detection<br><br> Register Page</h2>
-            <p>Register from here to access.</p>
+    <div class="d-lg-flex half">
+        <div class="bg order-1 order-md-2 bg-dark">
+            <h2 style="color: white;" class="text-center">Facial Expression Detection<br><br> Register Page</h2>
+            <p style="color: white;" class="text-center">Register from here to access.</p>
         </div>
-    </div>
-    <div class="main">
-        <div class="col-md-6 col-sm-12">
-            <div class="login-form">
+        <div class="contents order-2 order-md-1">
                 <form name="frmLogin" action="/register" method="POST" id="login-form" novalidate>
                     <div class="container">
                         {% with messages = get_flashed_messages(with_categories=true)%}
@@ -70,9 +67,6 @@
                 <p class="btn"><a href="/login" class="btn btn-secondary">Go to login page</a></p>
 
             </div>
-        </div>
-    </div>
-    </div>
 </body>
 
 </html>
