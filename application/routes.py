@@ -74,6 +74,16 @@ def remove_entry(id):
         flash(error,"danger")
 
 
+def get_entry(id):
+    try:
+        entries = Entry.query.filter(Entry.id==id)
+        result = entries[0]
+        return result
+    except Exception as error:
+        db.session.rollback()
+        flash(error,"danger") 
+        return 0  
+
 
 def parseImage(imgData):
     # parse canvas bytes and save as output.png
@@ -95,7 +105,7 @@ url = 'https://ca2-2b11-asdfasdf-tf.herokuapp.com/v1/models/img_classifier:predi
  
 @app.before_request
 def before_request():
-    if 'username' not in session and (request.endpoint != 'login' and request.endpoint != 'register'):
+    if 'username' not in session and (request.endpoint != 'login' and request.endpoint != 'register') and request.endpoint not in ['api_add','api_get','api_delete','api_getall','api_predict']:
         return redirect(url_for('login'))
 
 
@@ -201,6 +211,61 @@ def logout():
         session.pop('username', None)
     return redirect(url_for('login'))
 
+# test apis
+
+@app.route("/api/add", methods=['POST'])
+def api_add(): 
+
+    data = request.get_json()
+
+    image_name        = data['image_name']
+    prediction        = data['prediction']
+    username          = data['username']
+
+    new_entry = Entry(image_name=image_name,
+                        prediction=prediction,
+                        username=username,
+                        predicted_on=timezone.localize(datetime.now()))
+
+    #invoke the add entry function to add entry                        
+    result = add_entry(new_entry)
+    #return the result of the db action
+    return jsonify({'id':result})
+
+@app.route("/api/get/<id>", methods=['GET'])
+def api_get(id): 
+    #retrieve the entry using id from client
+    entry = get_entry(int(id))
+    #Prepare a dictionary for json conversion
+    data = {   'id' : entry.id,
+                'image_name':entry.image_name,
+                'prediction':entry.prediction,
+                'username':entry.username,
+                'predicted_on' : entry.predicted_on }
+#Convert the data to json
+    result = jsonify(data)
+    return result #response back
+
+#API delete entry
+@app.route("/api/delete/<id>", methods=['GET'])
+def api_delete(id): 
+    entry = remove_entry(int(id))
+    return jsonify({'result':'ok'})
+
+@app.route("/api/getall/<name>", methods=['GET'])
+def api_getall(name): 
+    entry = get_entries(str(name))
+    return jsonify({'result':'ok'})
+
+@app.route("/api/predict", methods=['POST'])
+def api_predict(): 
+    img_dir = parseImage(request.get_data())
+    img = image.img_to_array(image.load_img(img_dir + 'output.png', color_mode="grayscale", target_size=(48, 48))) / 255.
+    img = img.reshape(1,48,48,1)
+    predictions = make_prediction(img)
+    for i, pred in enumerate(predictions):
+        ret = "{}".format(labels[np.argmax(pred)])
+    return jsonify({'result':'ok', 'result': ret, 'probability': predictions[0]})
 
 
     
