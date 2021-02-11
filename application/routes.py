@@ -27,7 +27,7 @@ db.create_all()
 #labels for prediction
 labels = ['Angry','Fear','Sad','Neutral','Happy', 'Surprise']
 
-timezone = pytz.timezone("Singapore")
+timezone = pytz.timezone("Etc/GMT+8")
 
 def get_user(username):
     try:

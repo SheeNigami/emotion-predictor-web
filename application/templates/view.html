@@ -20,7 +20,7 @@
                 {% for entry in entries %}
                 <tr>
                     <td>{{ entry.image_name }}</td>
-                    <td>{{ entry.prediction|int }}</td>
+                    <td>{{ entry.prediction}}</td>
                     <td>{{ entry.predicted_on.strftime("%d %b %y %H:%M") }}</td>
                     <td>
                         <form name="frmRemoveEntry" action="/remove" method="post" 
