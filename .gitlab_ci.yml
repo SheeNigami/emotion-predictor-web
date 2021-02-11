@@ -9,8 +9,8 @@ docker-build:
   before_script:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
   script:
-    # - docker build --pull -t "$CI_REGISTRY_IMAGE" .
-    # - docker push "$CI_REGISTRY_IMAGE"
+    - docker build --pull -t "$CI_REGISTRY_IMAGE" .
+    - docker push "$CI_REGISTRY_IMAGE"
     - docker build -f Dockerfile --iidfile imageid.txt -t registry.heroku.com/https://ca2-2b11-asdfasdf-web.herokuapp.com/predict/web .
     - docker login -u _ -p $HEROKU_API_KEY registry.heroku.com
     - docker push registry.heroku.com/https://ca2-2b11-asdfasdf-web.herokuapp.com/predict/web

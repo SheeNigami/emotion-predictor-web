@@ -19,3 +19,6 @@ __pycache__
 .gitlab-ci.yml
 database.db
 nohup.out
+
+conftest.py
+test_application.py
