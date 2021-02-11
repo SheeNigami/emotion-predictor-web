@@ -73,7 +73,8 @@ def parseImage(imgData):
     imgstr = re.search(b'base64,(.*)', imgData).group(1)
     with tempfile.TemporaryDirectory() as tmpdirname:
         with open(tmpdirname + 'output.png','wb') as output:
-            output.write(base64.decodebytes(imgStr))
+            output.write(base64.decodebytes(imgstr))
+        return tmpdirname
  
 def make_prediction(instances):
     data = json.dumps({"signature_name": "serving_default", "instances": instances.tolist()})
@@ -99,35 +100,40 @@ def index_page():
     return render_template('index.html')
  
 #Handles http://127.0.0.1:5000/predict
-@app.route("/predict", methods=['POST'])
+@app.route("/predict", methods=['GET', 'POST'])
 @cross_origin(origin='localhost',headers=['Content-Type','Authorization'])
 def predict():
-    if request.method == 'POST':
-        # get data from drawing canvas and save as image
-        parseImage(request.get_data())
-        print("bruh")
-        # Build directory
-        img_dir = tempfile.TemporaryDirectory() + "output.png"
-        print(img_dir)
-        # Decoding and pre-processing base64 image
-        img = image.img_to_array(image.load_img(img_dir, color_mode="grayscale", target_size=(48, 48)) / 255.)
-        # reshape data to have a single channel
-        img = img.reshape(1,48,48,1)
+    #print(request.get_data())
+    # get data from drawing canvas and save as image
+    img_dir = parseImage(request.get_data())
+
+
+    # Build directory
+    # with tempfile.TemporaryDirectory() as tmpdirname:
+    #     img_dir = tmpdirname
+    #     print(img_dir)
+
+    # Decoding and pre-processing base64 image
+    img = image.img_to_array(image.load_img(img_dir + 'output.png', color_mode="grayscale", target_size=(48, 48))) / 255.
+    # reshape data to have a single channel
+    img = img.reshape(1,48,48,1)
+
+    predictions = make_prediction(img)
     
-        predictions = make_prediction(img)
-        
-        new_entry = Entry(  image_name=datetime.now().strftime("%d %B %Y") + session['username'],
-                            prediction=labels[np.argmax(predictions)],
-                            username=session['username'],
-                            predicted_on=datetime.utcnow())
-        add_entry(new_entry)
+    for i, pred in enumerate(predictions):
+        label_pred = labels[np.argmax(pred)]
+    new_entry = Entry(image_name=datetime.now().strftime("%d %B %Y") + session['username'],
+                        prediction=label_pred,
+                        username=session['username'],
+                        predicted_on=datetime.utcnow())
+    add_entry(new_entry)
 
 
-        ret = ""
-        for i, pred in enumerate(predictions):
-            ret = "{}".format(labels[np.argmax(pred)])
-            response = ret
-            return response
+    ret = ""
+    for i, pred in enumerate(predictions):
+        ret = "{}".format(labels[np.argmax(pred)])
+        response = ret
+        return response
         
 @app.route('/view') 
 def view_page():
