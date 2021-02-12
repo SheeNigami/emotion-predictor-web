@@ -88,7 +88,7 @@ def get_entry(id):
 def parseImage(imgData):
     # parse canvas bytes and save as output.png
     imgstr = re.search(b'base64,(.*)', imgData).group(1)
-    filename = './static/images/output-{}.png'.format(datetime.now())
+    filename = './static/images/output-{}.png'.format(datetime.now().strfrtime("%m%d%Y%H%M%S"))
     with open(filename,'wb') as output:
         output.write(base64.decodebytes(imgstr))
     return filename
