@@ -13,16 +13,16 @@
 </head>
 
 <body>
-    <div class="d-lg-flex half">
-    <div class="bg order-1 order-md-2">
-        <h2 style="color: white;" class="text-center">Facial Expression Detection<br> Login Page</h2>
+    <div class="row h-100">
+    <div class="row bg-dark order-1 order-md-2 col-md-6 align-items-center justify-content-center">
+        <h2 style="color: white;" class="text-center col-12">Facial Expression Detection<br> Login Page</h2>
         <p style="color: white;" class="text-center">Login from here to access.</p>
     </div>
-    <div class="contents order-2 order-md-1">
+    <div class="contents order-2 order-md-1 col-md-6 m-auto">
     <form name="frmLogin" action="/login" method="post" novalidate>
         <legend>{{title}}</legend>
         {{ form.hidden_tag() }}
-        <div class="col-md-6 col-sm-12">
+        <div class="col-lg-6 col-sm-12">
             <div class="container">
                 {% with messages = get_flashed_messages(with_categories=true)%}
                 {% if messages %}
