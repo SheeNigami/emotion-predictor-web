@@ -1,0 +1,62 @@
+<!-- Inherits from layout.html -->
+{% extends "layout.html" %}
+<!-- The block content replace the one encapsulated in  layout.html -->
+{% block content %}
+        <hr>
+      <div class="row g-3">
+        <input class="form-control col-sm" type="text" id="myInput" onkeyup="myFunction(0)" placeholder="Search for names..">
+        <input class="form-control col-sm" type="text" id="myInput" onkeyup="myFunction(1)" placeholder="Search for prediction..">
+        <input class="form-control col-sm" type="text" id="myInput" onkeyup="myFunction(2)" placeholder="Search for timestamp..">
+      </div>
+        <table class="table table-striped" id="myTable">
+            <thead>
+                <tr>
+                    <th>Image name</th>
+                    <th>Prediction</th>
+                    <th>Timestamp</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in entries %}
+                <tr>
+                    <td>{{ entry.image_name }}</td>
+                    <td>{{ entry.prediction}}</td>
+                    <td>{{ entry.predicted_on.strftime("%d %b %y %H:%M") }}</td>
+                    <td>
+                        <form name="frmRemoveEntry" action="/remove" method="post" 
+                              novalidate>
+                        <input type="hidden" name="id" value="{{entry.id}}">
+                        <input type="submit" class="form-control btn-danger" 
+                               value="Remove">
+                        </form>
+                    </td>
+                    
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <script>
+            function myFunction(column) {
+              // Declare variables
+              var input, filter, table, tr, td, i, txtValue;
+              input = document.getElementById("myInput");
+              filter = input.value.toUpperCase();
+              table = document.getElementById("myTable");
+              tr = table.getElementsByTagName("tr");
+            
+              // Loop through all table rows, and hide those who don't match the search query
+              for (i = 0; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("td")[column];
+                if (td) {
+                  txtValue = td.textContent || td.innerText;
+                  if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                  } else {
+                    tr[i].style.display = "none";
+                  }
+                }
+              }
+            }
+            </script>
+
+{% endblock %}
