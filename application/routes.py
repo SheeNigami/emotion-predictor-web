@@ -88,10 +88,10 @@ def get_entry(id):
 def parseImage(imgData):
     # parse canvas bytes and save as output.png
     imgstr = re.search(b'base64,(.*)', imgData).group(1)
-    with tempfile.TemporaryDirectory() as tmpdirname:
-        with open(tmpdirname + 'output.png','wb') as output:
-            output.write(base64.decodebytes(imgstr))
-        return tmpdirname
+    filename = './static/images/output-{}.png'.format(datetime.now())
+    with open(filename,'wb') as output:
+        output.write(base64.decodebytes(imgstr))
+    return filename
  
 def make_prediction(instances):
     data = json.dumps({"signature_name": "serving_default", "instances": instances.tolist()})
@@ -121,10 +121,11 @@ def index_page():
 @cross_origin(origin='localhost',headers=['Content-Type','Authorization'])
 def predict():
     # get data from drawing canvas and save as image
-    img_dir = parseImage(request.get_data())
+    filename = parseImage(request.get_data())
 
     # Decoding and pre-processing base64 image
-    img = image.img_to_array(image.load_img(img_dir + 'output.png', color_mode="grayscale", target_size=(48, 48))) / 255.
+    img = image.img_to_array(image.load_img(filename, color_mode="grayscale", target_size=(48, 48))) / 255.
+
     # reshape data to have a single channel
     img = img.reshape(1,48,48,1)
 
@@ -259,8 +260,8 @@ def api_getall(name):
 
 @app.route("/api/predict", methods=['POST'])
 def api_predict(): 
-    img_dir = parseImage(request.get_data())
-    img = image.img_to_array(image.load_img(img_dir + 'output.png', color_mode="grayscale", target_size=(48, 48))) / 255.
+    filename = parseImage(request.get_data())
+    img = image.img_to_array(image.load_img(filename, color_mode="grayscale", target_size=(48, 48))) / 255.
     img = img.reshape(1,48,48,1)
     predictions = make_prediction(img)
     for i, pred in enumerate(predictions):
